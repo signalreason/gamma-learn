@@ -10,36 +10,46 @@ const GammaSimulator = () => {
   const [strikePrice] = useState(100);
   const [isShortGamma, setIsShortGamma] = useState(true);
   const [showExplanation, setShowExplanation] = useState(false);
+  const [displayedAction, setDisplayedAction] = useState<"BUYING" | "SELLING" | "HOLDING">("HOLDING");
+  const [shareChange, setShareChange] = useState(0);
 
   // Calculate delta and gamma based on price distance from strike
   const distanceFromStrike = stockPrice - strikePrice;
   const delta = Math.min(1, Math.max(0, 0.5 + distanceFromStrike * 0.02));
   const gamma = Math.exp(-Math.pow(distanceFromStrike / 10, 2)) * 0.1;
 
-  // Market maker's hedging action
-  const priceChange = stockPrice - previousPrice;
-  const hedgingAction = isShortGamma
-    ? priceChange > 0
-      ? "BUYING"
-      : priceChange < 0
-      ? "SELLING"
-      : "HOLDING"
-    : priceChange > 0
-    ? "SELLING"
-    : priceChange < 0
-    ? "BUYING"
-    : "HOLDING";
-
   const sharesNeeded = Math.round(delta * 100);
-  const previousShares = Math.round(
-    Math.min(1, Math.max(0, 0.5 + (previousPrice - strikePrice) * 0.02)) * 100
-  );
-  const shareChange = sharesNeeded - previousShares;
 
+  // Track price changes and show hedging action persistently
   useEffect(() => {
-    const timer = setTimeout(() => setPreviousPrice(stockPrice), 300);
-    return () => clearTimeout(timer);
-  }, [stockPrice]);
+    const priceChange = stockPrice - previousPrice;
+    
+    if (priceChange !== 0) {
+      const previousShares = Math.round(
+        Math.min(1, Math.max(0, 0.5 + (previousPrice - strikePrice) * 0.02)) * 100
+      );
+      const newShareChange = sharesNeeded - previousShares;
+      
+      const action = isShortGamma
+        ? priceChange > 0 ? "BUYING" : "SELLING"
+        : priceChange > 0 ? "SELLING" : "BUYING";
+      
+      setDisplayedAction(action);
+      setShareChange(Math.abs(newShareChange));
+      setPreviousPrice(stockPrice);
+    }
+  }, [stockPrice, previousPrice, strikePrice, isShortGamma, sharesNeeded]);
+
+  // Reset to HOLDING after 2 seconds of no changes
+  useEffect(() => {
+    if (displayedAction !== "HOLDING") {
+      const timer = setTimeout(() => {
+        setDisplayedAction("HOLDING");
+        setShareChange(0);
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [displayedAction, stockPrice]);
 
   return (
     <section id="simulator" className="py-24 px-4 bg-gradient-to-b from-background via-secondary/10 to-background">
@@ -164,26 +174,26 @@ const GammaSimulator = () => {
             {/* Hedging Action */}
             <motion.div
               className={`p-6 rounded-xl mb-6 ${
-                hedgingAction === "BUYING"
+                displayedAction === "BUYING"
                   ? "bg-success/20 border border-success/30"
-                  : hedgingAction === "SELLING"
+                  : displayedAction === "SELLING"
                   ? "bg-destructive/20 border border-destructive/30"
                   : "bg-secondary/50 border border-border"
               }`}
               animate={{
-                scale: hedgingAction !== "HOLDING" ? [1, 1.02, 1] : 1,
+                scale: displayedAction !== "HOLDING" ? [1, 1.02, 1] : 1,
               }}
               transition={{ duration: 0.3 }}
             >
               <div className="flex items-center gap-4">
-                {hedgingAction === "BUYING" && <TrendingUp className="w-10 h-10 text-success" />}
-                {hedgingAction === "SELLING" && <TrendingDown className="w-10 h-10 text-destructive" />}
-                {hedgingAction === "HOLDING" && <span className="text-4xl">⏸️</span>}
+                {displayedAction === "BUYING" && <TrendingUp className="w-10 h-10 text-success" />}
+                {displayedAction === "SELLING" && <TrendingDown className="w-10 h-10 text-destructive" />}
+                {displayedAction === "HOLDING" && <span className="text-4xl">⏸️</span>}
                 <div>
-                  <p className="text-2xl font-bold font-display">{hedgingAction}</p>
+                  <p className="text-2xl font-bold font-display">{displayedAction}</p>
                   <p className="text-muted-foreground">
-                    {hedgingAction !== "HOLDING"
-                      ? `${Math.abs(shareChange)} shares to rebalance`
+                    {displayedAction !== "HOLDING"
+                      ? `${shareChange} shares to rebalance`
                       : "No action needed"}
                   </p>
                 </div>
