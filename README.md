@@ -1,73 +1,48 @@
-# Welcome to your Lovable project
+# GammaLearn
 
-## Project info
+GammaLearn is an interactive learning app that explains market makers, options, and gamma exposure (GEX) through hands-on visuals and quizzes. It includes concept cards, a real-time hedging simulator, scenario walkthroughs, and a knowledge check.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+Note: This app was created using [lovable.dev](https://lovable.dev).
 
-## How can I edit this code?
+## Features
 
-There are several ways of editing your application.
+- Core concept cards for market makers, options, delta hedging, and gamma exposure
+- Interactive simulator that shows hedging behavior as price moves
+- GEX scenarios (negative, neutral, positive) with visual flows and insights
+- Interactive quiz with explanations and scoring
 
-**Use Lovable**
+## Tech Stack
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+- Vite + React + TypeScript
+- Tailwind CSS + shadcn/ui (Radix UI)
+- Framer Motion
+- React Router
 
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
+## Getting Started
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+npm install
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+## Scripts
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+```sh
+npm run dev        # start dev server
+npm run build      # production build
+npm run build:dev  # development build
+npm run preview    # preview build locally
+npm run lint       # eslint
+npm run test       # vitest run
+npm run test:watch # vitest watch
+```
 
-**Use GitHub Codespaces**
+## Project Structure
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+- `src/pages/Index.tsx` — main landing page composition
+- `src/components` — UI sections like the simulator, visualization, and quiz
+- `src/components/ui` — shared UI primitives (shadcn/ui)
 
-## What technologies are used for this project?
+## Notes
 
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+- This is a client-side app; there is no backend.
